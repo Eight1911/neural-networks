@@ -16,7 +16,7 @@ class nnet:
         self.initialize()
         self.sess = tf.Session()
         self.run = self.sess.run
-        self.makemodel()
+
 
 
     def initialize(self):
@@ -39,7 +39,7 @@ class nnet:
         return y
 
 
-    def makemodel(self):
+    def makemodel(self, l_rate):
         x = tf.placeholder(tf.float64, [None, self.arch[0]])
         y_ = tf.placeholder(tf.float64, [None, self.arch[-1]])
         ws, bs, acts = self.varws, self.varbs, self.varacts
@@ -48,14 +48,14 @@ class nnet:
             y = a(tf.matmul(y, w) + b)
 
         loss = tf.reduce_mean((y - y_)**2)
-        trainer = tf.train.MomentumOptimizer(3e-4, 0.9, use_nesterov=True).minimize(loss)
+        trainer = tf.train.AdamOptimizer(l_rate).minimize(loss)
         self.run(tf.global_variables_initializer())
-        self.trainset = [x, y_, y, loss, trainer]
+        return [x, y_, y, loss, trainer]
 
 
-    def train(self, flow, iterations):
+    def train(self, flow, iterations, l_rate):
         running = 0
-        x, y_, y, loss, trainer = self.trainset
+        x, y_, y, loss, trainer = self.makemodel(l_rate)
         ws, bs = self.varws, self.varbs
         for i, (xs, ys) in zip(range(iterations), flow):
             if i % 100:
@@ -77,4 +77,8 @@ net = nnet(arch, acts, varacts)
 
 streamer = mani.gamer(net)
 flow = streamer.stream()
-net.train(flow, 10000000)
+
+net.train(flow, 100000, 1e-3)
+net.train(flow, 500000, 5e-4)
+net.train(flow, 1000000, 1e-5)
+net.train(flow, 10000000, 5e-6)

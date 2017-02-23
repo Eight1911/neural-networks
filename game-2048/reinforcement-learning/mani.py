@@ -118,7 +118,7 @@ class gamer:
                 if f(board):
                     temp = board.copy()
                     MOVES[i](temp)
-                    yield count, self.play(temp)
+                    yield count, [board.copy()] + self.play(temp)
             print(count)
             print(board)
             print(self.net(tovec(board)))
