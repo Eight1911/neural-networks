@@ -25,7 +25,6 @@ class nnet:
         self.initialize()
         self.sess = tf.Session()
         self.run = self.sess.run
-        self.makemodel()
 
 
     def initialize(self):
@@ -47,7 +46,7 @@ class nnet:
         return y
 
 
-    def makemodel(self):
+    def makemodel(self, l_rate):
         x = tf.placeholder(tf.float64, [None, self.arch[0]])
         y_ = tf.placeholder(tf.float64, [None, self.arch[-1]])
         ws, bs, acts = self.varws, self.varbs, self.varacts
@@ -57,12 +56,13 @@ class nnet:
 
         loss = (y - y_) ** 2
         weightloss = sum(tf.reduce_sum(w*w) for w in ws)
-        trainer = tf.train.MomentumOptimizer(1e-4, 0.99).minimize(loss)
+        trainer = tf.train.AdamOptimizer(l_rate).minimize(loss)
         self.run(tf.global_variables_initializer())
         self.trainset = [x, y_, y, loss, trainer]
 
 
     def train(self, flow, iterations):
+        self.makemodel(l_rate)
         running = 0
         x, y_, y, loss, trainer = self.trainset
         ws, bs = self.varws, self.varbs
@@ -79,7 +79,7 @@ class nnet:
 import mani
 
 
-arch = [256, 100, 100, 100, 100, 4]
+arch = [256, 100, 50, 50, 50, 50, 50, 1]
 acts = [leaky_relu] * 4 + [softmax]
 varacts = [lambda x: tf.maximum(0.01*x,x)] * 4 + [lambda x: tf.exp(x)]
 net = nnet(arch, acts, varacts)
