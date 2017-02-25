@@ -76,7 +76,7 @@ class gamer:
             ables = [f(board) for f in ABLES]
 
             s = sum(ables)
-            if not s: 
+            if not s:
                 return None
             elif s == 1:
                 return ables.index(True)

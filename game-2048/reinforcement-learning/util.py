@@ -150,5 +150,3 @@ def addtile(arr):
             if arr[i, j]: continue
             l.append((i, j))
     arr[choice(l)] = 1 if random() < 0.9 else 2
-
-

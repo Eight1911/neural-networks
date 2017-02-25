@@ -3,6 +3,8 @@ import numpy as np
 from numpy import dot
 import tensorflow as tf
 
+import pickle
+
 
 class nnet:
 
@@ -13,19 +15,42 @@ class nnet:
         self.varacts = varacts
         self.dims = list(zip(arch, arch[1:]))
         self.arch = arch
-        self.initialize()
+        try:
+            self.load()
+            print("loaded")
+        except:
+            self.initialize()
+            print("initialized")
+
         self.sess = tf.Session()
         self.run = self.sess.run
 
 
+    def save(self):
+        f = open('weights.p', 'wb')
+        data = (self.ws, self.bs)
+        pickle.dump(data, f)
+        f.close()
 
-    def initialize(self):
+
+    def load(self):
+        ws, bs = pickle.load(open('weights.p', 'rb'))
+        self.initialize(ws, bs)
+
+
+    def initialize(self, ws=None, bs=None):
         # xavier weight initialization
-        ws, bs = [0] * self.n, [0] * self.n
-        for i, (col, row) in enumerate(self.dims):
-            factor = 1 / np.sqrt(row + col)
-            ws[i] = factor * randn(size=(col, row))
-            bs[i] = np.zeros(row)
+        if ws and bs:
+            assert len(ws) == len(bs) == len(self.dims)
+            for i, (col, row) in enumerate(self.dims):
+                assert ws[i].shape == (col, row)
+                assert bs[i].shape == (row,)
+        else:
+            ws, bs = [0] * self.n, [0] * self.n
+            for i, (col, row) in enumerate(self.dims):
+                factor = 1 / np.sqrt(row + col)
+                ws[i] = factor * randn(size=(col, row))
+                bs[i] = np.zeros(row)
         self.ws, self.bs = ws, bs
         self.varws = list(map(tf.Variable, ws))
         self.varbs = list(map(tf.Variable, bs))
@@ -61,6 +86,7 @@ class nnet:
             if i % 100:
                 _, l = self.run((trainer, loss), feed_dict={x: xs, y_: ys})
             else:
+                if not i % 1000: self.save()
                 _, l, self.ws[:], self.bs[:]  = self.run((trainer, loss, ws, bs), feed_dict={x: xs, y_: ys})
             running *= 0.999
             running += l
@@ -78,7 +104,6 @@ net = nnet(arch, acts, varacts)
 streamer = mani.gamer(net)
 flow = streamer.stream()
 
-net.train(flow, 100000, 1e-3)
-net.train(flow, 500000, 5e-4)
+net.train(flow, 500000, 3e-4)
 net.train(flow, 1000000, 1e-5)
 net.train(flow, 10000000, 5e-6)
