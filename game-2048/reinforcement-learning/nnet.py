@@ -8,19 +8,23 @@ import pickle
 
 class nnet:
 
-    def __init__(self, arch, acts, varacts):
+    def __init__(self, arch, acts, varacts, re=False):
         self.n = len(arch) - 1
 
         self.acts = acts
         self.varacts = varacts
         self.dims = list(zip(arch, arch[1:]))
         self.arch = arch
-        try:
-            self.load()
-            print("loaded")
-        except:
+        if re:
             self.initialize()
             print("initialized")
+        else:
+            try:
+                self.load()
+                print("loaded")
+            except:
+                self.initialize()
+                print("initialized")
 
         self.sess = tf.Session()
         self.run = self.sess.run
@@ -104,6 +108,6 @@ net = nnet(arch, acts, varacts)
 streamer = mani.gamer(net)
 flow = streamer.stream()
 
-net.train(flow, 500000, 3e-4)
-net.train(flow, 1000000, 1e-5)
-net.train(flow, 10000000, 5e-6)
+net.train(flow, 500000, 1e-4)
+net.train(flow, 1000000, 3e-5)
+net.train(flow, 10000000, 1e-5)
