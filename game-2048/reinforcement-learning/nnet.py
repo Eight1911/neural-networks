@@ -108,6 +108,5 @@ net = nnet(arch, acts, varacts)
 streamer = mani.gamer(net)
 flow = streamer.stream()
 
-net.train(flow, 500000, 1e-4)
-net.train(flow, 1000000, 3e-5)
-net.train(flow, 10000000, 1e-5)
+
+net.train(flow, 10000000, 1e-7)
