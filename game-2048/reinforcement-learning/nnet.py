@@ -77,7 +77,7 @@ class nnet:
             y = a(tf.matmul(y, w) + b)
 
         loss = tf.reduce_mean((y - y_)**2)
-        trainer = tf.train.AdamOptimizer(l_rate).minimize(loss)
+        trainer = tf.train.MomentumOptimizer(l_rate, 0.9999).minimize(loss)
         self.run(tf.global_variables_initializer())
         return [x, y_, y, loss, trainer]
 
@@ -95,12 +95,10 @@ class nnet:
             running *= 0.999
             running += l
 
+
 import mani
 
-
-
-
-arch = [256, 100, 50, 50, 50, 50, 50, 1]
+arch = [256, 150, 100, 50, 10, 1]
 acts = [lambda x: np.maximum(0.1*x, x)] * 10
 varacts = [lambda x: tf.maximum(0.1*x, x)] * 10
 net = nnet(arch, acts, varacts)
@@ -109,4 +107,4 @@ streamer = mani.gamer(net)
 flow = streamer.stream()
 
 
-net.train(flow, 10000000, 1e-7)
+net.train(flow, 10000000, 1e-8)

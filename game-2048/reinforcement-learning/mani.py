@@ -144,5 +144,5 @@ class gamer:
                 running += 0.01*(n + count)
                 print(n + count, running)
                 for i, board in enumerate(game):
-                    ret[:] = np.log(n - i)
+                    ret[:] = (n - i)**0.5
                     yield tflip(board), ret
