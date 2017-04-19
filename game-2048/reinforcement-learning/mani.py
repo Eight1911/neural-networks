@@ -37,8 +37,6 @@ def tflip(arr):
 
 
 
-
-
 class gamer:
 
 
@@ -48,7 +46,19 @@ class gamer:
 
     def best(self, board):
 
-        def move(board):
+        def score(board, n):
+            index = np.where(board == 0)
+            count = index[0].size
+            if not count: return -70.0
+            score2, score4 = 0.0, 0.0
+            for i, j in zip(*index):
+                board[i,j] = 1
+                score2 += move(board, n - 1)
+                board[i,j] = 2
+                score4 += move(board, n - 1)
+            return (0.9*score2 + 0.1*score4) / count
+
+        def move(board, n):
             runn = self.net.__call__
             ables = [f(board) for f in ABLES]
             blanc = [-50.0] * 4
@@ -56,25 +66,11 @@ class gamer:
                 if ables[i]:
                     temp = board.copy()
                     f(temp)
-                    blanc[i] = runn(tovec(temp))[0, 0]
+                    blanc[i] = score(temp, n) if n else runn(tovec(temp))[0, 0]
             return max(blanc)
-
-
-        def score(board):
-            index = np.where(board == 0)
-            count = index[0].size
-            if not count: return -70.0
-            score2, score4 = 0, 0
-            for i,j in zip(*index):
-                board[i,j] = 1
-                score2 += move(board)
-                board[i,j] = 2
-                score4 += move(board)
-            return (0.9*score2 + 0.1*score4) / count
 
         def main(board):
             ables = [f(board) for f in ABLES]
-
             s = sum(ables)
             if not s:
                 return None
@@ -85,8 +81,7 @@ class gamer:
                 if ables[i]:
                     temp = board.copy()
                     f(temp)
-                    blanc[i] = score(temp)
-
+                    blanc[i] = score(temp, 2)
             ind = np.argmax(blanc)
             return ind
 
@@ -99,6 +94,7 @@ class gamer:
         board = np.zeros((4, 4), np.uint8) if start is None else start
         ind = True
         while True:
+            print(board)
             util.addtile(board)
             ind = self.best(board)
             states.append(board.copy())
@@ -143,6 +139,7 @@ class gamer:
                 running *= 0.99
                 running += 0.01*(n + count)
                 print(n + count, running)
+
                 for i, board in enumerate(game):
-                    ret[:] = (n - i)**0.5
+                    ret[:] = np.log((n - i)) - 5
                     yield tflip(board), ret

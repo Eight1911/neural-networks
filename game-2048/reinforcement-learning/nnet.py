@@ -98,9 +98,9 @@ class nnet:
 
 import mani
 
-arch = [256, 150, 100, 50, 10, 1]
-acts = [lambda x: np.maximum(0.1*x, x)] * 10
-varacts = [lambda x: tf.maximum(0.1*x, x)] * 10
+arch = [256, 130, 50, 50, 1]
+acts = [lambda x: np.maximum(0.1*x, x)] * 3  + [lambda x: x]
+varacts = [lambda x: tf.maximum(0.1*x, x)] * 3 + [lambda x: x]
 net = nnet(arch, acts, varacts)
 
 streamer = mani.gamer(net)
