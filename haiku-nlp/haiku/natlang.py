@@ -155,7 +155,7 @@ class haiku:
         def main(self, text):
             initialize(self)
 
-            if len(text) > 500:
+            if not 500 > len(text) > 30:
                 return destroy(self)
 
             self.texts = text
@@ -180,6 +180,7 @@ print("done import", flush=True)
 text = """
 Night; and once again, the while I wait for you, cold wind turns into rain.
 """
+
 
 for i in range(1000):
     if i % 30 == 0: print(i)
