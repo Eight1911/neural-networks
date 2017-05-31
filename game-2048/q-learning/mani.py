@@ -61,7 +61,7 @@ class gamer:
         def move(board, n):
             runn = self.net.__call__
             ables = [f(board) for f in ABLES]
-            blanc = [-50.0] * 4
+            blanc = [-70.0] * 4
             for i, f in enumerate(MOVES):
                 if ables[i]:
                     temp = board.copy()
@@ -81,7 +81,7 @@ class gamer:
                 if ables[i]:
                     temp = board.copy()
                     f(temp)
-                    blanc[i] = score(temp, 2)
+                    blanc[i] = score(temp, 1)
             ind = np.argmax(blanc)
             return ind
 

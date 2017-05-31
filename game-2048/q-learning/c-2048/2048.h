@@ -25,8 +25,8 @@ typedef union onionquart {
 	uint16_t integer : 16;
 } onionquart;
 
-typedef struct rows { 
-	onionquart row_0, row_1, row_2, row_3; 
+typedef struct rows {
+	onionquart row_0, row_1, row_2, row_3;
 } rows;
 
 typedef union onionboard {
@@ -42,23 +42,23 @@ void print(onionboard const);
 
 static inline
 onionquart compress(
-	register uint8_t row_0, 
-	register uint8_t row_1, 
-	register uint8_t row_2, 
+	register uint8_t row_0,
+	register uint8_t row_1,
+	register uint8_t row_2,
 	register uint8_t row_3) {
 	if (row_0) {
-		if (row_1) {						// 1 1 1 1 // 1 1 1 0 
+		if (row_1) {						// 1 1 1 1 // 1 1 1 0
 			if (!row_2 && row_3) {			// 1 1 0 1
-				row_2 = row_3; 
+				row_2 = row_3;
 				row_3 = 0;
-			}	// else do nothing 			// 1 1 0 0	
+			}	// else do nothing 			// 1 1 0 0
 		} else {
 			if (row_2) {
 				if (row_3) { 				// 1 0 1 1
 					row_1 = row_2;
 					row_2 = row_3;
 					row_3 = 0;
-				} else { 					// 1 0 1 0 
+				} else { 					// 1 0 1 0
 					row_1 = row_2;
 					row_2 = 0;
 				}
@@ -83,7 +83,7 @@ onionquart compress(
 					row_0 = row_1;
 					row_1 = row_2;
 					row_2 = 0;
-				} 
+				}
 			} else {
 				if (row_3) { 				// 0 1 0 1
 					row_0 = row_1;
@@ -100,7 +100,7 @@ onionquart compress(
 					row_1 = row_3;
 					row_2 = 0;
 					row_3 = 0;
-				} else { 					// 0 0 1 0 
+				} else { 					// 0 0 1 0
 					return (onionquart) {.quart = (quart) {row_2, 0, 0, 0}};
 				}
 			} else {
@@ -134,23 +134,23 @@ onionquart compress(
 
 static inline
 onionquart reversecompress(
-	register uint8_t row_3, 
-	register uint8_t row_2, 
-	register uint8_t row_1, 
+	register uint8_t row_3,
+	register uint8_t row_2,
+	register uint8_t row_1,
 	register uint8_t row_0) {
 	if (row_0) {
-		if (row_1) {						// 1 1 1 1 // 1 1 1 0 
+		if (row_1) {						// 1 1 1 1 // 1 1 1 0
 			if (!row_2 && row_3) {			// 1 1 0 1
-				row_2 = row_3; 
+				row_2 = row_3;
 				row_3 = 0;
-			}	// else do nothing 			// 1 1 0 0	
+			}	// else do nothing 			// 1 1 0 0
 		} else {
 			if (row_2) {
 				if (row_3) { 				// 1 0 1 1
 					row_1 = row_2;
 					row_2 = row_3;
 					row_3 = 0;
-				} else { 					// 1 0 1 0 
+				} else { 					// 1 0 1 0
 					row_1 = row_2;
 					row_2 = 0;
 				}
@@ -175,7 +175,7 @@ onionquart reversecompress(
 					row_0 = row_1;
 					row_1 = row_2;
 					row_2 = 0;
-				} 
+				}
 			} else {
 				if (row_3) { 				// 0 1 0 1
 					row_0 = row_1;
@@ -192,7 +192,7 @@ onionquart reversecompress(
 					row_1 = row_3;
 					row_2 = 0;
 					row_3 = 0;
-				} else { 					// 0 0 1 0 
+				} else { 					// 0 0 1 0
 					return (onionquart) {.quart = (quart) {0, 0, 0, row_2}};
 				}
 			} else {
@@ -228,7 +228,7 @@ onionquart reversecompress(
 static inline
 onionboard left(register onionboard chain) {
 	onionboard const copy = chain;
-	chain.rows = (rows) { 
+	chain.rows = (rows) {
 		compress(chain.board.t__0, chain.board.t__1, chain.board.t__2, chain.board.t__3),
 		compress(chain.board.t__4, chain.board.t__5, chain.board.t__6, chain.board.t__7),
 		compress(chain.board.t__8, chain.board.t__9, chain.board.t_10, chain.board.t_11),
@@ -242,7 +242,7 @@ onionboard left(register onionboard chain) {
 static inline
 onionboard right(register onionboard chain) {
 	onionboard const copy = chain;
-	chain.rows = (rows) { 
+	chain.rows = (rows) {
 		reversecompress(chain.board.t__0, chain.board.t__1, chain.board.t__2, chain.board.t__3),
 		reversecompress(chain.board.t__4, chain.board.t__5, chain.board.t__6, chain.board.t__7),
 		reversecompress(chain.board.t__8, chain.board.t__9, chain.board.t_10, chain.board.t_11),
@@ -354,73 +354,73 @@ onionboard add(register onionboard chain) {
 	if (!chain.board.t_14) { if (pos == position) { chain.board.t_14 = addvalue?1:2 ; return chain; } ++pos; }
 	if (!chain.board.t_15) { if (pos == position) { chain.board.t_15 = addvalue?1:2 ; return chain; } ++pos; }
 	return chain;
-	// there is a 1 in 8 chance that 
+	// there is a 1 in 8 chance that
 	// a four tile rather than a two tile
 	// is spawned
 }
 
 
 void print(onionboard const chain) {
-	// printf("\33[2K\r\033[A\r"); 
+	// printf("\33[2K\r\033[A\r");
 	// delete last line and move cursor up one line
 	//*
 	printf( "\33[2K\r\033[A\r"
 			"\33[2K\r\033[A\r"
 			"\33[2K\r\033[A\r"
 			"\33[2K\r\033[A\r"
-			"\33[2K\r\033[A\r" 
-			"\33[2K\r\033[A\r" 
+			"\33[2K\r\033[A\r"
+			"\33[2K\r\033[A\r"
 			); // 5 times
 	//*/
 	printf("\n");
 	printf("|");
 	chain.board.t__0 ? printf("%6i|", 1 << chain.board.t__0) : printf("      |");
-	chain.board.t__1 ? printf("%6i|", 1 << chain.board.t__1) : printf("      |"); 
-	chain.board.t__2 ? printf("%6i|", 1 << chain.board.t__2) : printf("      |"); 
-	chain.board.t__3 ? printf("%6i|", 1 << chain.board.t__3) : printf("      |"); 
+	chain.board.t__1 ? printf("%6i|", 1 << chain.board.t__1) : printf("      |");
+	chain.board.t__2 ? printf("%6i|", 1 << chain.board.t__2) : printf("      |");
+	chain.board.t__3 ? printf("%6i|", 1 << chain.board.t__3) : printf("      |");
 	printf("\n");
 	printf("|");
 	chain.board.t__4 ? printf("%6i|", 1 << chain.board.t__4) : printf("      |");
-	chain.board.t__5 ? printf("%6i|", 1 << chain.board.t__5) : printf("      |"); 
-	chain.board.t__6 ? printf("%6i|", 1 << chain.board.t__6) : printf("      |"); 
-	chain.board.t__7 ? printf("%6i|", 1 << chain.board.t__7) : printf("      |"); 
+	chain.board.t__5 ? printf("%6i|", 1 << chain.board.t__5) : printf("      |");
+	chain.board.t__6 ? printf("%6i|", 1 << chain.board.t__6) : printf("      |");
+	chain.board.t__7 ? printf("%6i|", 1 << chain.board.t__7) : printf("      |");
 	printf("\n");
 	printf("|");
 	chain.board.t__8 ? printf("%6i|", 1 << chain.board.t__8) : printf("      |");
-	chain.board.t__9 ? printf("%6i|", 1 << chain.board.t__9) : printf("      |"); 
-	chain.board.t_10 ? printf("%6i|", 1 << chain.board.t_10) : printf("      |"); 
-	chain.board.t_11 ? printf("%6i|", 1 << chain.board.t_11) : printf("      |"); 
+	chain.board.t__9 ? printf("%6i|", 1 << chain.board.t__9) : printf("      |");
+	chain.board.t_10 ? printf("%6i|", 1 << chain.board.t_10) : printf("      |");
+	chain.board.t_11 ? printf("%6i|", 1 << chain.board.t_11) : printf("      |");
 	printf("\n");
 	printf("|");
 	chain.board.t_12 ? printf("%6i|", 1 << chain.board.t_12) : printf("      |");
-	chain.board.t_13 ? printf("%6i|", 1 << chain.board.t_13) : printf("      |"); 
-	chain.board.t_14 ? printf("%6i|", 1 << chain.board.t_14) : printf("      |"); 
-	chain.board.t_15 ? printf("%6i|", 1 << chain.board.t_15) : printf("      |"); 
+	chain.board.t_13 ? printf("%6i|", 1 << chain.board.t_13) : printf("      |");
+	chain.board.t_14 ? printf("%6i|", 1 << chain.board.t_14) : printf("      |");
+	chain.board.t_15 ? printf("%6i|", 1 << chain.board.t_15) : printf("      |");
 	printf("\n");
 	printf("\n");
 }
 
 
 /*/
-static inline 
+static inline
 onionboard cycle(onionboard chain, onionboard (*direction)(onionboard)) {
 	//printf("\33[2K\r\033[A\r");
 	onionboard new = direction(chain);
 	if (!(new.integer)) return chain;
 	chain = add(new);
-	print(chain);	
+	print(chain);
 	return chain;
 }
 
 
 void play() {
-	system("stty cbreak");		// change mode so that putunsigned char immediately 
+	system("stty cbreak");		// change mode so that putunsigned char immediately
 								// returns value after one unsigned character is pressed
-	srandom(0);//time(NULL)); 	// initialize random number generator using 
+	srandom(0);//time(NULL)); 	// initialize random number generator using
 								//	current time. granularity is in seconds.
-	
+
 	onionboard chain = {.integer = 0};
-	chain = add(chain);		// add the first element. 
+	chain = add(chain);		// add the first element.
 	print(chain);
 
 	for (;;) {
