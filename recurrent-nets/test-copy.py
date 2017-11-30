@@ -1,4 +1,0 @@
-import lstm
-
-
-lstm.init()
