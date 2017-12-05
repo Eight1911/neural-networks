@@ -30,7 +30,7 @@ preds = np.argmax(result, axis = 1)
 label = np.argmax(mnist.test.labels, axis = 1)
 print(label.size)
 print("results:", np.equal(preds, label).sum())
-"""
+
 train.set_dropout([0.1, 0.1, 0.1, 0.1])
 for i in range(6):
     train.train(5000)
@@ -38,4 +38,3 @@ for i in range(6):
     preds = np.argmax(result, axis = 1)
     label = np.argmax(mnist.test.labels, axis = 1)
     print("results:", np.equal(preds, label).sum())
-"""
